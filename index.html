@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
   <script>
+    
     tailwind.config = {
       theme: {
         extend: {
@@ -347,6 +348,754 @@
 
     setInterval(checkOverdueReminders, 60000);
 
+    checkOverdueReminders();
+  </script>
+</body>
+</html> -->
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reminder App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6366f1',
+            secondary: '#f59e0b'
+          },
+          borderRadius: {
+            'none': '0px',
+            'sm': '4px',
+            DEFAULT: '8px',
+            'md': '12px',
+            'lg': '16px',
+            'xl': '20px',
+            '2xl': '24px',
+            '3xl': '32px',
+            'full': '9999px',
+            'button': '8px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :where([class^="ri-"])::before { content: "\f3c2"; }
+    .reminder-card {
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    input[type="date"], input[type="time"] {
+      color-scheme: light;
+    }
+    input:focus {
+      outline: none;
+    }
+    input[type="time"]::-webkit-calendar-picker-indicator,
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      opacity: 0;
+      position: absolute;
+      right: 0;
+      cursor: pointer;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+  <div id="app" class="max-w-3xl mx-auto px-4 py-8 space-y-8">
+    <div class="text-center mb-8">
+      <h1 class="font-['Pacifico'] text-3xl text-primary mb-2">Student Time-management App</h1>
+      <p class="text-gray-600">Keep track of what matters most</p>
+    </div>
+    <div id="addView" class="space-y-6">
+      <h1 class="text-2xl font-bold text-gray-900">New Reminder</h1>
+      <div class="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6 space-y-4 border border-gray-100">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Event Name</label>
+          <input type="text" id="eventName" placeholder="Enter event name" class="w-full px-4 py-3 rounded-lg bg-gray-50/50 border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all duration-300 text-sm placeholder:text-gray-400">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+          <div class="relative">
+            <input type="date" id="eventDate" class="w-full px-4 py-3 rounded-lg bg-gray-50/50 border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all duration-300 text-sm placeholder:text-gray-400">
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none w-5 h-5 flex items-center justify-center">
+              <i class="ri-calendar-line text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+          <div class="relative">
+            <input type="time" id="eventTime" class="w-full px-4 py-3 rounded-lg bg-gray-50/50 border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all duration-300 text-sm placeholder:text-gray-400">
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none w-5 h-5 flex items-center justify-center">
+              <i class="ri-time-line text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+        <button id="addButton" class="w-full bg-primary text-white py-3 px-4 rounded-button hover:bg-primary/90 transition-all duration-300 cursor-pointer shadow-lg shadow-primary/25 hover:shadow-primary/20 hover:translate-y-[-1px]">
+          Add Reminder
+        </button>
+      </div>
+    </div>
+    <div id="listView" class="hidden space-y-6">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-900">My Reminders</h1>
+        <button id="sortButton" class="text-gray-600 hover:text-primary transition-colors cursor-pointer">
+          <div class="w-8 h-8 flex items-center justify-center">
+            <i class="ri-sort-desc"></i>
+          </div>
+        </button>
+      </div>
+      <div id="remindersList" class="space-y-3">
+      </div>
+      <div id="emptyState" class="text-center py-12 hidden">
+        <div class="w-16 h-16 mx-auto mb-4 text-gray-300 flex items-center justify-center">
+          <i class="ri-calendar-todo-line ri-3x"></i>
+        </div>
+        <h3 class="text-gray-500">No reminders yet</h3>
+        <p class="text-gray-400 text-sm mt-1">Add your first reminder to get started</p>
+      </div>
+    </div>
+  </div>
+  <div class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t border-gray-100 shadow-lg">
+    <div class="max-w-3xl mx-auto px-4">
+      <div class="flex justify-around py-3">
+        <button class="nav-btn flex flex-col items-center space-y-1 text-primary cursor-pointer" data-view="add">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-add-line"></i>
+          </div>
+          <span class="text-xs">Add</span>
+        </button>
+        <button class="nav-btn flex flex-col items-center space-y-1 text-gray-400 cursor-pointer" data-view="list">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-list-check"></i>
+          </div>
+          <span class="text-xs">List</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white/90 backdrop-blur-sm rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl border border-gray-100">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Delete Reminder</h3>
+      <p class="text-gray-500 mb-6">Are you sure you want to delete this reminder? This action cannot be undone.</p>
+      <div class="flex space-x-3">
+        <button id="cancelDelete" class="flex-1 px-4 py-2 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">Cancel</button>
+        <button id="confirmDelete" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-button hover:bg-red-700 transition-colors cursor-pointer">Delete</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const motivationalMessages = [
+      "You're making great progress! Keep going!",
+      "Almost there! You can do this!",
+      "Halfway through! Keep up the momentum!",
+      "The finish line is in sight!",
+      "You're doing amazing! Stay focused!"
+    ];
+
+    let reminders = [];
+    let currentView = 'add';
+    let deleteId = null;
+    let editId = null;
+
+    function populateReminders(count) {
+      reminders = Array.from({ length: count }, (_, i) => ({
+        id: i + 1,
+        name: `Test Reminder ${i + 1}`,
+        date: "2025-05-08",
+        time: "14:00",
+        completed: false,
+        notified: false
+      }));
+      renderReminders();
+    }
+
+    function switchView(view) {
+      document.getElementById('addView').classList.toggle('hidden', view !== 'add');
+      document.getElementById('listView').classList.toggle('hidden', view !== 'list');
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.toggle('text-primary', btn.dataset.view === view);
+        btn.classList.toggle('text-gray-400', btn.dataset.view !== view);
+      });
+      currentView = view;
+      if (view === 'list') renderReminders();
+    }
+
+    function formatDate(dateStr) {
+      return new Date(dateStr).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+
+    function getMotivationalMessage(reminder) {
+      const now = new Date();
+      const dueDate = new Date(`${reminder.date}T${reminder.time}:00`);
+      const timeLeft = dueDate - now;
+      const halfwayPoint = dueDate - (24 * 60 * 60 * 1000); // 1 day before
+
+      if (timeLeft <= 0) {
+        return "Time's up! Let's mark this as complete!";
+      } else if (timeLeft <= 3600000) { // Within 1 hour
+        return "Time is almost up! You've got this!";
+      } else if (now >= new Date(halfwayPoint)) {
+        return motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+      }
+      return "";
+    }
+
+    function checkOverdueReminders() {
+      const now = new Date();
+      reminders.forEach(reminder => {
+        const dueDate = new Date(`${reminder.date}T${reminder.time}:00`);
+        const timeLeft = dueDate - now;
+
+        if (timeLeft <= 0 && !reminder.completed && !reminder.notified) {
+          alert(`Time's up to complete task: ${reminder.name} on ${formatDate(reminder.date)} at ${reminder.time}!`);
+          reminder.notified = true;
+        }
+      });
+    }
+
+    function renderReminders() {
+      const list = document.getElementById('remindersList');
+      const emptyState = document.getElementById('emptyState');
+      if (reminders.length === 0) {
+        list.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+
+      list.innerHTML = reminders.map(reminder => {
+        const motivationalMessage = getMotivationalMessage(reminder);
+        const messageHTML = motivationalMessage ?
+          `<p class="text-xs text-primary italic mt-1">${motivationalMessage}</p>` : '';
+
+        return `
+          <div class="reminder-card bg-white/80 backdrop-blur-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-5 border border-gray-100 hover:border-primary/20" data-id="${reminder.id}">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex-1">
+                <h3 class="font-medium text-gray-900 ${reminder.completed ? 'line-through text-gray-400' : ''}">${reminder.name}</h3>
+                <p class="text-sm text-gray-500">${formatDate(reminder.date)} at ${reminder.time}</p>
+                ${messageHTML}
+              </div>
+              <div class="flex items-center space-x-2">
+                <button class="complete-btn w-8 h-8 ${reminder.completed ? 'text-green-500' : 'text-gray-400'} hover:text-green-500 transition-colors flex items-center justify-center cursor-pointer">
+                  <i class="${reminder.completed ? 'ri-checkbox-circle-fill' : 'ri-checkbox-circle-line'}"></i>
+                </button>
+                <button class="edit-btn w-8 h-8 text-gray-400 hover:text-primary transition-colors flex items-center justify-center cursor-pointer">
+                  <i class="ri-edit-line"></i>
+                </button>
+                <button class="delete-btn w-8 h-8 text-gray-400 hover:text-red-500 transition-colors flex items-center justify-center cursor-pointer">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      list.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = parseInt(e.target.closest('.reminder-card').dataset.id);
+          deleteId = id;
+          document.getElementById('deleteModal').classList.remove('hidden');
+        });
+      });
+
+      list.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = parseInt(e.target.closest('.reminder-card').dataset.id);
+          const reminder = reminders.find(r => r.id === id);
+          document.getElementById('eventName').value = reminder.name;
+          document.getElementById('eventDate').value = reminder.date;
+          document.getElementById('eventTime').value = reminder.time;
+          editId = id;
+          switchView('add');
+          document.getElementById('addButton').textContent = 'Update Reminder';
+        });
+      });
+
+      list.querySelectorAll('.complete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const startTime = performance.now();
+          const id = parseInt(e.target.closest('.reminder-card').dataset.id);
+          const reminder = reminders.find(r => r.id === id);
+          reminder.completed = !reminder.completed;
+          const notification = document.createElement('div');
+          notification.classList.add('bg-green-500', 'text-white', 'p-4', 'rounded-lg', 'shadow-lg', 'mt-4');
+          notification.innerHTML = reminder.completed ? 'Reminder marked as completed!' : 'Reminder marked as incomplete!';
+          document.body.appendChild(notification);
+          setTimeout(() => {
+            notification.classList.add('opacity-0');
+            setTimeout(() => {
+              notification.remove();
+              console.log(`Completion time: ${performance.now() - startTime}ms`);
+            }, 300);
+          }, 2000);
+          renderReminders();
+        });
+      });
+    }
+
+    document.getElementById('addButton').addEventListener('click', () => {
+      const name = document.getElementById('eventName').value;
+      const date = document.getElementById('eventDate').value;
+      const time = document.getElementById('eventTime').value;
+
+      if (!name || !date || !time) return;
+
+      if (editId) {
+        const reminder = reminders.find(r => r.id === editId);
+        reminder.name = name;
+        reminder.date = date;
+        reminder.time = time;
+        reminder.notified = false;
+        editId = null;
+        document.getElementById('addButton').textContent = 'Add Reminder';
+      } else {
+        const id = reminders.length + 1;
+        reminders.push({ id, name, date, time, completed: false, notified: false });
+      }
+
+      document.getElementById('eventName').value = '';
+      document.getElementById('eventDate').value = '';
+      document.getElementById('eventTime').value = '';
+
+      renderReminders();
+      switchView('list');
+    });
+
+    document.getElementById('cancelDelete').addEventListener('click', () => {
+      document.getElementById('deleteModal').classList.add('hidden');
+    });
+
+    document.getElementById('confirmDelete').addEventListener('click', () => {
+      if (deleteId) {
+        reminders = reminders.filter(r => r.id !== deleteId);
+        renderReminders();
+      }
+      document.getElementById('deleteModal').classList.add('hidden');
+    });
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchView(btn.dataset.view);
+        if (btn.dataset.view === 'add') {
+          editId = null;
+          document.getElementById('addButton').textContent = 'Add Reminder';
+          document.getElementById('eventName').value = '';
+          document.getElementById('eventDate').value = '';
+          document.getElementById('eventTime').value = '';
+        }
+      });
+    });
+
+    populateReminders(10);
+    switchView('add');
+    setInterval(checkOverdueReminders, 60000);
+    checkOverdueReminders();
+  </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reminder App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Pacific mild:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6366f1',
+            secondary: '#f59e0b'
+          },
+          borderRadius: {
+            'none': '0px',
+            'sm': '4px',
+            DEFAULT: '8px',
+            'md': '12px',
+            'lg': '16px',
+            'xl': '20px',
+            '2xl': '24px',
+            '3xl': '32px',
+            'full': '9999px',
+            'button': '8px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .reminder-card {
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    input[type="date"], input[type="time"] {
+      color-scheme: light;
+    }
+    input:focus {
+      outline: none;
+    }
+    input[type="time"]::-webkit-calendar-picker-indicator,
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      opacity: 0;
+      position: absolute;
+      right: 0;
+      cursor: pointer;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+  <div id="app" class="max-w-3xl mx-auto px-4 py-8 space-y-8">
+    <div class="text-center mb-8">
+      <h1 class="font-['Pacifico'] text-3xl text-primary mb-2">Student Time-management App</h1>
+      <p class="text-gray-600">Keep track of what matters most</p>
+    </div>
+    <div id="addView" class="space-y-6">
+      <h1 class="text-2xl font-bold text-gray-900">New Reminder</h1>
+      <div class="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6 space-y-4 border border-gray-100">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Event Name</label>
+          <input type="text" id="eventName" placeholder="Enter event name" class="w-full px-4 py-3 rounded-lg bg-gray-50/50 border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all duration-300 text-sm placeholder:text-gray-400">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+          <div class="relative">
+            <input type="date" id="eventDate" class="w-full px-4 py-3 rounded-lg bg-gray-50/50 border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all duration-300 text-sm placeholder:text-gray-400">
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none w-5 h-5 flex items-center justify-center">
+              <i class="ri-calendar-line text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+          <div class="relative">
+            <input type="time" id="eventTime" class="w-full px-4 py-3 rounded-lg bg-gray-50/50 border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all duration-300 text-sm placeholder:text-gray-400">
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none w-5 h-5 flex items-center justify-center">
+              <i class="ri-time-line text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+        <button id="addButton" class="w-full bg-primary text-white py-3 px-4 rounded-button hover:bg-primary/90 transition-all duration-300 cursor-pointer shadow-lg shadow-primary/25 hover:shadow-primary/20 hover:translate-y-[-1px]">
+          Add Reminder
+        </button>
+      </div>
+    </div>
+    <div id="listView" class="hidden space-y-6">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-900">My Reminders</h1>
+        <button id="sortButton" class="text-gray-600 hover:text-primary transition-colors cursor-pointer">
+          <div class="w-8 h-8 flex items-center justify-center">
+            <i class="ri-sort-desc"></i>
+          </div>
+        </button>
+      </div>
+      <div id="remindersList" class="space-y-3">
+      </div>
+      <div id="emptyState" class="text-center py-12 hidden">
+        <div class="w-16 h-16 mx-auto mb-4 text-gray-300 flex items-center justify-center">
+          <i class="ri-calendar-todo-line ri-3x"></i>
+        </div>
+        <h3 class="text-gray-500">No reminders yet</h3>
+        <p class="text-gray-400 text-sm mt-1">Add your first reminder to get started</p>
+      </div>
+    </div>
+  </div>
+  <div class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t border-gray-100 shadow-lg">
+    <div class="max-w-3xl mx-auto px-4">
+      <div class="flex justify-around py-3">
+        <button class="nav-btn flex flex-col items-center space-y-1 text-primary cursor-pointer" data-view="add">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-add-line"></i>
+          </div>
+          <span class="text-xs">Add</span>
+        </button>
+        <button class="nav-btn flex flex-col items-center space-y-1 text-gray-400 cursor-pointer" data-view="list">
+          <div class="w-6 h-6 flex items-center justify-center">
+            <i class="ri-list-check"></i>
+          </div>
+          <span class="text-xs">List</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white/90 backdrop-blur-sm rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl border border-gray-100">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Delete Reminder</h3>
+      <p class="text-gray-500 mb-6">Are you sure you want to delete this reminder? This action cannot be undone.</p>
+      <div class="flex space-x-3">
+        <button id="cancelDelete" class="flex-1 px-4 py-2 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">Cancel</button>
+        <button id="confirmDelete" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-button hover:bg-red-700 transition-colors cursor-pointer">Delete</button>
+      </div>
+    </ deliberate>
+  </div>
+  <script>
+    const motivationalMessages = [
+      "You're making great progress! Keep going!",
+      "Almost there! You can do this!",
+      "Halfway through! Keep up the momentum!",
+      "The finish line is in sight!",
+      "You're doing amazing! Stay focused!"
+    ];
+
+    let reminders = [];
+    let currentView = 'add';
+    let deleteId = null;
+    let editId = null;
+
+    function populateReminders() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const load = urlParams.get('load');
+      const count = load === 'heavy' ? 100 : 10; // Normal: 10, Heavy: 100
+      reminders = Array.from({ length: count }, (_, i) => ({
+        id: i + 1,
+        name: `Test Reminder ${i + 1}`,
+        date: "2025-05-08",
+        time: "14:00",
+        completed: false,
+        notified: false
+      }));
+      const startTime = performance.now();
+      renderReminders();
+      const renderTime = performance.now() - startTime;
+      console.log(`Render time for ${count} reminders: ${renderTime}ms`);
+      window.__renderTime = renderTime;
+    }
+
+    function switchView(view) {
+      document.getElementById('addView').classList.toggle('hidden', view !== 'add');
+      document.getElementById('listView').classList.toggle('hidden', view !== 'list');
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.toggle('text-primary', btn.dataset.view === view);
+        btn.classList.toggle('text-gray-400', btn.dataset.view !== view);
+      });
+      currentView = view;
+      if (view === 'list') renderReminders();
+    }
+
+    function formatDate(dateStr) {
+      return new Date(dateStr).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+
+    function getMotivationalMessage(reminder) {
+      const now = new Date();
+      const dueDate = new Date(`${reminder.date}T${reminder.time}:00`);
+      const timeLeft = dueDate - now;
+      const halfwayPoint = dueDate - (24 * 60 * 60 * 1000); // 1 day before
+
+      if (timeLeft <= 0) {
+        return "Time's up! Let's mark this as complete!";
+      } else if (timeLeft <= 3600000) { // Within 1 hour
+        return "Time is almost up! You've got this!";
+      } else if (now >= new Date(halfwayPoint)) {
+        return motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+      }
+      return "";
+    }
+
+    function checkOverdueReminders() {
+      const now = new Date();
+      reminders.forEach(reminder => {
+        const dueDate = new Date(`${reminder.date}T${reminder.time}:00`);
+        const timeLeft = dueDate - now;
+
+        if (timeLeft <= 0 && !reminder.completed && !reminder.notified) {
+          alert(`Time's up to complete task: ${reminder.name} on ${formatDate(reminder.date)} at ${reminder.time}!`);
+          reminder.notified = true;
+        }
+      });
+    }
+
+    function renderReminders() {
+      const list = document.getElementById('remindersList');
+      const emptyState = document.getElementById('emptyState');
+      if (reminders.length === 0) {
+        list.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+
+      list.innerHTML = reminders.map(reminder => {
+        const motivationalMessage = getMotivationalMessage(reminder);
+        const messageHTML = motivationalMessage ?
+          `<p class="text-xs text-primary italic mt-1">${motivationalMessage}</p>` : '';
+
+        return `
+          <div class="reminder-card bg-white/80 backdrop-blur-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-5 border border-gray-100 hover:border-primary/20" data-id="${reminder.id}">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex-1">
+                <h3 class="font-medium text-gray-900 ${reminder.completed ? 'line-through text-gray-400' : ''}">${reminder.name}</h3>
+                <p class="text-sm text-gray-500">${formatDate(reminder.date)} at ${reminder.time}</p>
+                ${messageHTML}
+              </div>
+              <div class="flex items-center space-x-2">
+                <button class="complete-btn w-8 h-8 ${reminder.completed ? 'text-green-500' : 'text-gray-400'} hover:text-green-500 transition-colors flex items-center justify-center cursor-pointer">
+                  <i class="${reminder.completed ? 'ri-checkbox-circle-fill' : 'ri-checkbox-circle-line'}"></i>
+                </button>
+                <button class="edit-btn w-8 h-8 text-gray-400 hover:text-primary transition-colors flex items-center justify-center cursor-pointer">
+                  <i class="ri-edit-line"></i>
+                </button>
+                <button class="delete-btn w-8 h-8 text-gray-400 hover:text-red-500 transition-colors flex items-center justify-center cursor-pointer">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      list.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = parseInt(e.target.closest('.reminder-card').dataset.id);
+          deleteId = id;
+          document.getElementById('deleteModal').classList.remove('hidden');
+        });
+      });
+
+      list.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = parseInt(e.target.closest('.reminder-card').dataset.id);
+          const reminder = reminders.find(r => r.id === id);
+          document.getElementById('eventName').value = reminder.name;
+          document.getElementById('eventDate').value = reminder.date;
+          document.getElementById('eventTime').value = reminder.time;
+          editId = id;
+          switchView('add');
+          document.getElementById('addButton').textContent = 'Update Reminder';
+        });
+      });
+
+      list.querySelectorAll('.complete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const startTime = performance.now();
+          const id = parseInt(e.target.closest('.reminder-card').dataset.id);
+          const reminder = reminders.find(r => r.id === id);
+          reminder.completed = !reminder.completed;
+          const notification = document.createElement('div');
+          notification.classList.add('bg-green-500', 'text-white', 'p-4', 'rounded-lg', 'shadow-lg', 'mt-4');
+          notification.innerHTML = reminder.completed ? 'Reminder marked as completed!' : 'Reminder marked as incomplete!';
+          document.body.appendChild(notification);
+          setTimeout(() => {
+            notification.classList.add('opacity-0');
+            setTimeout(() => {
+              notification.remove();
+              const completionTime = performance.now() - startTime;
+              console.log(`Completion time: ${completionTime}ms`);
+              window.__completionTime = completionTime;
+            }, 300);
+          }, 2000);
+          renderReminders();
+        });
+      });
+    }
+
+    document.getElementById('addButton').addEventListener('click', () => {
+      const name = document.getElementById('eventName').value;
+      const date = document.getElementById('eventDate').value;
+      const time = document.getElementById('eventTime').value;
+
+      if (!name || !date || !time) return;
+
+      if (editId) {
+        const reminder = reminders.find(r => r.id === editId);
+        reminder.name = name;
+        reminder.date = date;
+        reminder.time = time;
+        reminder.notified = false;
+        editId = null;
+        document.getElementById('addButton').textContent = 'Add Reminder';
+      } else {
+        const id = reminders.length + 1;
+        reminders.push({ id, name, date, time, completed: false, notified: false });
+      }
+
+      document.getElementById('eventName').value = '';
+      document.getElementById('eventDate').value = '';
+      document.getElementById('eventTime').value = '';
+
+      renderReminders();
+      switchView('list');
+    });
+
+    document.getElementById('cancelDelete').addEventListener('click', () => {
+      document.getElementById('deleteModal').classList.add('hidden');
+    });
+
+    document.getElementById('confirmDelete').addEventListener('click', () => {
+      if (deleteId) {
+        reminders = reminders.filter(r => r.id !== deleteId);
+        renderReminders();
+      }
+      document.getElementById('deleteModal').classList.add('hidden');
+    });
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchView(btn.dataset.view);
+        if (btn.dataset.view === 'add') {
+          editId = null;
+          document.getElementById('addButton').textContent = 'Add Reminder';
+          document.getElementById('eventName').value = '';
+          document.getElementById('eventDate').value = '';
+          document.getElementById('eventTime').value = '';
+        }
+      });
+    });
+
+    let sortOrder = 'asc';
+    document.getElementById('sortButton').addEventListener('click', () => {
+      sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+      reminders.sort((a, b) => {
+        const dateA = new Date(`${a.date}T${a.time}`);
+        const dateB = new Date(`${b.date}T${b.time}`);
+        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+      });
+      renderReminders();
+    });
+
+    function saveReminders() {
+      localStorage.setItem('reminders', JSON.stringify(reminders));
+    }
+    function loadReminders() {
+      const saved = localStorage.getItem('reminders');
+      if (saved) reminders = JSON.parse(saved);
+    }
+    loadReminders();
+
+    populateReminders();
+    switchView('add');
+    setInterval(checkOverdueReminders, 60000);
     checkOverdueReminders();
   </script>
 </body>
